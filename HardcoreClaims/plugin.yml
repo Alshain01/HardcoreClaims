@@ -4,5 +4,5 @@ description: Addon for Grief Prevention that deletes claims and restores the lan
 author: Alshain01
 website: http://dev.bukkit.org/bukkit-plugins/hardcoreclaims/
 main: alshain01.HardcoreClaims.HardcoreClaims
-depend: GriefPrevention
-softdepend: Flags
+depend: [GriefPrevention]
+softdepend: [Flags]
