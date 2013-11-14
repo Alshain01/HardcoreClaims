@@ -1,0 +1,8 @@
+name: HardcoreClaims
+version: 1.0.0
+description: Addon for Grief Prevention that deletes claims and restores the land when a player dies.
+author: Alshain01
+website: http://dev.bukkit.org/bukkit-plugins/hardcoreclaims/
+main: alshain01.HardcoreClaims.HardcoreClaims
+depend: GriefPrevention
+softdepend: Flags
