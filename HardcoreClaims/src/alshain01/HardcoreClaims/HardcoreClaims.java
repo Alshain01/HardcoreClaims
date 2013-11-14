@@ -71,6 +71,7 @@ public class HardcoreClaims extends JavaPlugin {
 
 	private Object hcFlag = null;
 	private Object delFlag = null;
+	private final Listener reaper = new Reaper();
 
 	@Override
 	public void onEnable() {
@@ -79,7 +80,7 @@ public class HardcoreClaims extends JavaPlugin {
 			getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
-		getServer().getPluginManager().registerEvents(new Reaper(), this);
+		getServer().getPluginManager().registerEvents(reaper, this);
 
 		if (getServer().getPluginManager().isPluginEnabled("Flags")) {
 			this.getLogger().info("Enabling Flags Integration");
@@ -93,5 +94,10 @@ public class HardcoreClaims extends JavaPlugin {
 						true, getName());
 			}
 		}
+	}
+	
+	@Override
+	public void onDisable() {
+		PlayerDeathEvent.getHandlerList().unregister(reaper);
 	}
 }
