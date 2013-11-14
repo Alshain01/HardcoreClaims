@@ -48,8 +48,8 @@ public class HardcoreClaims extends JavaPlugin {
 	private class Reaper implements Listener {
 		@EventHandler(priority = EventPriority.LOWEST)
 		private void onPlayerDeath(PlayerDeathEvent e) {
-			if (reapFlag != null
-					&& !Director.getAreaAt(e.getEntity().getLocation()).getValue((Flag) reapFlag, false)) {
+			if (delFlag != null
+					&& !Director.getAreaAt(e.getEntity().getLocation()).getValue((Flag) delFlag, false)) {
 				return;
 			}
 			
@@ -70,22 +70,28 @@ public class HardcoreClaims extends JavaPlugin {
 	}
 
 	private Object hcFlag = null;
-	private Object reapFlag = null;
+	private Object delFlag = null;
 
 	@Override
 	public void onEnable() {
+		if(!getServer().getPluginManager().isPluginEnabled("GriefPrevention")) {
+			this.getLogger().info("Grief Prevention is not installed. HardcoreClaims is shutting down");
+			getServer().getPluginManager().disablePlugin(this);
+			return;
+		}
 		getServer().getPluginManager().registerEvents(new Reaper(), this);
 
-		if (getServer().getPluginManager().isPluginEnabled("Flags")
-				&& SystemType.getActive() == SystemType.GRIEF_PREVENTION) {
-
-			hcFlag = Flags.getRegistrar().register("HardcoreClaim",
-					"Toggles the claim's hardcore status (area/default only).",
-					true, getName());
-
-			reapFlag = Flags.getRegistrar().register("HardcoreReaping",
+		if (getServer().getPluginManager().isPluginEnabled("Flags")) {
+			this.getLogger().info("Enabling Flags Integration");
+			delFlag = Flags.getRegistrar().register("HardcoreDeletion",
 					"Toggles whether the player will lose hardcore claims if they die in the area.",
 					true, getName());
+				
+			if(SystemType.getActive() == SystemType.GRIEF_PREVENTION) {
+				hcFlag = Flags.getRegistrar().register("HardcoreClaim",
+						"Toggles the claim's hardcore status (area/default only).",
+						true, getName());
+			}
 		}
 	}
 }
