@@ -25,6 +25,7 @@
 package alshain01.HardcoreClaims;
 
 import me.ryanhamshire.GriefPrevention.Claim;
+import me.ryanhamshire.GriefPrevention.ClaimArray;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
 import org.bukkit.event.EventHandler;
@@ -53,18 +54,21 @@ public class HardcoreClaims extends JavaPlugin {
 				return;
 			}
 			
-			for (final Claim c : GriefPrevention.instance.dataStore.getClaimArray()) {
-				if (!c.getOwnerName().equals(e.getEntity().getName())) {
+			//for (final Claim c : GriefPrevention.instance.dataStore.getClaimArray()) {
+			ClaimArray claims = GriefPrevention.instance.dataStore.getClaimArray();
+			for(int c = 0; c < claims.size(); c++) {
+				Claim claim = claims.get(c);
+				if (!claim.getOwnerName().equals(e.getEntity().getName())) {
 					return;
 				}
 
 				if (hcFlag != null
-						&& !new GriefPreventionClaim(c.getGreaterBoundaryCorner()).getValue((Flag) hcFlag, false)) {
+						&& !new GriefPreventionClaim(claim.getGreaterBoundaryCorner()).getValue((Flag) hcFlag, false)) {
 					return;
 				}
 
-				GriefPrevention.instance.dataStore.deleteClaim(c);
-				GriefPrevention.instance.restoreClaim(c, 0);
+				GriefPrevention.instance.dataStore.deleteClaim(claim);
+				GriefPrevention.instance.restoreClaim(claim, 0);
 			}
 		}
 	}
