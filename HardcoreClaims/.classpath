@@ -8,6 +8,6 @@
 			<attribute name="javadoc_location" value="http://jd.bukkit.org/rb/apidocs/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/GriefPrevention-187.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kevin Seiden/workspace/GriefPrevention-190.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
