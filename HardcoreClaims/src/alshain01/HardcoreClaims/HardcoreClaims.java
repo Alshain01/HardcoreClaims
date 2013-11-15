@@ -93,7 +93,7 @@ public class HardcoreClaims extends JavaPlugin {
 			// Block all container placement outside claims to prevent cheating
 			switch(e.getBlock().getType()) {
 				case CHEST:
-					// Don't cancel it if they have a claim.
+					// Don't cancel it if they don't have a claim.
 					if(GriefPrevention.instance.dataStore.getPlayerData(e.getPlayer().getName()).claims.size() == 0) {
 						return;
 					}
