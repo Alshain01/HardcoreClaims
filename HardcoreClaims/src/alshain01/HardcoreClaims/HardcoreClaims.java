@@ -54,33 +54,20 @@ public class HardcoreClaims extends JavaPlugin {
 				return;
 			}
 			
-			for (final long id : GriefPrevention.instance.dataStore.getClaimIds()) {
-				HardcoreClaims.instance.getLogger().info("DEBUG: Checking Claim ID " + id);
+			for (long id : GriefPrevention.instance.dataStore.getClaimIds()) {
 				Claim claim = GriefPrevention.instance.dataStore.getClaim(id);
 				
-				if (claim == null || !claim.inDataStore) {
-					HardcoreClaims.instance.getLogger().info("DEBUG: Claim Not Found: ID " + id);
-				}
-				
-				if (!claim.getOwnerName().equals(e.getEntity().getName())) {
-					HardcoreClaims.instance.getLogger().info("DEBUG: Claimed Not Owned by Corpse: Name " + claim.getOwnerName() + " ID " + id);
-					return;
+				if (claim == null || !claim.inDataStore || !claim.getOwnerName().equals(e.getEntity().getName())) {
+					continue;
 				}
 
 				if (hcFlag != null
 						&& !new GriefPreventionClaim(claim.getGreaterBoundaryCorner()).getValue((Flag) hcFlag, false)) {
-					HardcoreClaims.instance.getLogger().info("DEBUG: Flag Prevents Claim Deletion: ID " + id);
-					return;
+					continue;
 				}
 
-				HardcoreClaims.instance.getLogger().info("DEBUG: Deleting Claim: ID " + id);
 				GriefPrevention.instance.dataStore.deleteClaim(claim);
-				if(claim.inDataStore) {
-					HardcoreClaims.instance.getLogger().info("DEBUG: Claim Still in DataStore " + id);
-				} else {
-					HardcoreClaims.instance.getLogger().info("DEBUG: Claim No Longer in DataStore " + id);
-				}
-				GriefPrevention.instance.restoreClaim(claim, 50);
+				GriefPrevention.instance.restoreClaim(claim, 0);
 			}
 		}
 	}
