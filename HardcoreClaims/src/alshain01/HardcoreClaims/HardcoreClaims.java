@@ -30,6 +30,7 @@ import me.ryanhamshire.GriefPrevention.events.ClaimDeletedEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
@@ -45,6 +46,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import alshain01.Flags.Director;
@@ -164,6 +166,8 @@ public class HardcoreClaims extends JavaPlugin {
 					if(((Tameable)e).isTamed() && ((Tameable)e).getOwner().getName().equals(player.getName())) {
 						if(e instanceof Horse) {
 							((Horse)e).setCarryingChest(false);
+							((Horse)e).getInventory().setArmor(new ItemStack(Material.AIR));
+							((Horse)e).getInventory().setSaddle(new ItemStack(Material.AIR));
 						}
 						((Tameable)e).setOwner(null);
 					}
