@@ -26,6 +26,7 @@ package alshain01.HardcoreClaims;
 
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
+import me.ryanhamshire.GriefPrevention.events.ClaimDeletedEvent;
 
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -139,22 +140,35 @@ public class HardcoreClaims extends JavaPlugin {
 				}
 
 				GriefPrevention.instance.dataStore.deleteClaim(c);
-				GriefPrevention.instance.restoreClaim(c, 0);
+				//GriefPrevention.instance.restoreClaim(c, 0);
 			}
 		}
 	}
+	
+	private class Orphanage implements Listener {
+		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+		private void onClaimDeleted(ClaimDeletedEvent e) {
+			//Delay the removal to wait for the claim to finish deleting
+			GriefPrevention.instance.restoreClaim(e.getClaim(), 100);
+		}
+	}
 
+	// Flags need to be Objects to guard against cases where
+	// The Flags plugin in is not installed.  We will cast them back later.
 	private Object hcFlag = null, delFlag = null;
-	private final Listener reaper = new Reaper();
-	private final Listener containerGuard = new ContainerGuard();
-	private final Listener commandGuard = new CommandGuard();
+	@SuppressWarnings("unused")
+	private final Listener reaper = new Reaper(), 
+			containerGuard = new ContainerGuard(),
+			commandGuard = new CommandGuard(),
+			orphanage = new Orphanage();
 
 	@Override
 	public void onDisable() {
 		// Cleanup
 		EntityDeathEvent.getHandlerList().unregister(reaper);
 		PlayerInteractEvent.getHandlerList().unregister(containerGuard);
-		PlayerCommandPreprocessEvent.getHandlerList().unregister(commandGuard);
+		//PlayerCommandPreprocessEvent.getHandlerList().unregister(commandGuard);
+		ClaimDeletedEvent.getHandlerList().unregister(orphanage);
 	}
 
 	@Override
@@ -166,7 +180,7 @@ public class HardcoreClaims extends JavaPlugin {
 			return;
 		}
 
-		// Register Flags
+		// Register Non-Player Flags
 		if (getServer().getPluginManager().isPluginEnabled("Flags")) {
 			getLogger().info("Enabling Flags Integration");
 			delFlag = Flags.getRegistrar()
@@ -181,6 +195,7 @@ public class HardcoreClaims extends JavaPlugin {
 		// Event Listeners
 		getServer().getPluginManager().registerEvents(reaper, this);
 		getServer().getPluginManager().registerEvents(containerGuard, this);
-		getServer().getPluginManager().registerEvents(commandGuard, this);
+		//getServer().getPluginManager().registerEvents(commandGuard, this);
+		getServer().getPluginManager().registerEvents(orphanage, this);
 	}
 }
