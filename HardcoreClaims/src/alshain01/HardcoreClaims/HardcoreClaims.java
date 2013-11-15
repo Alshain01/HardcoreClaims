@@ -50,26 +50,37 @@ public class HardcoreClaims extends JavaPlugin {
 		private void onPlayerDeath(PlayerDeathEvent e) {
 			if (delFlag != null
 					&& !Director.getAreaAt(e.getEntity().getLocation()).getValue((Flag) delFlag, false)) {
+				HardcoreClaims.instance.getLogger().info("DEBUG: Flag Protects Player Claims");
 				return;
 			}
 			
 			for (final long id : GriefPrevention.instance.dataStore.getClaimIds()) {
+				HardcoreClaims.instance.getLogger().info("DEBUG: Checking Claim ID " + id);
 				Claim claim = GriefPrevention.instance.dataStore.getClaim(id);
-				if(claim == null) {
-					return;
+				
+				if (claim == null || !claim.inDataStore) {
+					HardcoreClaims.instance.getLogger().info("DEBUG: Claim Not Found: ID " + id);
 				}
 				
 				if (!claim.getOwnerName().equals(e.getEntity().getName())) {
+					HardcoreClaims.instance.getLogger().info("DEBUG: Claimed Not Owned by Corpse: Name " + claim.getOwnerName() + " ID " + id);
 					return;
 				}
 
 				if (hcFlag != null
 						&& !new GriefPreventionClaim(claim.getGreaterBoundaryCorner()).getValue((Flag) hcFlag, false)) {
+					HardcoreClaims.instance.getLogger().info("DEBUG: Flag Prevents Claim Deletion: ID " + id);
 					return;
 				}
 
+				HardcoreClaims.instance.getLogger().info("DEBUG: Deleting Claim: ID " + id);
 				GriefPrevention.instance.dataStore.deleteClaim(claim);
-				GriefPrevention.instance.restoreClaim(claim, 0);
+				if(claim.inDataStore) {
+					HardcoreClaims.instance.getLogger().info("DEBUG: Claim Still in DataStore " + id);
+				} else {
+					HardcoreClaims.instance.getLogger().info("DEBUG: Claim No Longer in DataStore " + id);
+				}
+				GriefPrevention.instance.restoreClaim(claim, 50);
 			}
 		}
 	}
@@ -77,9 +88,11 @@ public class HardcoreClaims extends JavaPlugin {
 	private Object hcFlag = null;
 	private Object delFlag = null;
 	private final Listener reaper = new Reaper();
-
+	private static JavaPlugin instance;
+	
 	@Override
 	public void onEnable() {
+		instance = this;
 		if(!getServer().getPluginManager().isPluginEnabled("GriefPrevention")) {
 			this.getLogger().info("Grief Prevention is not installed. HardcoreClaims is shutting down");
 			getServer().getPluginManager().disablePlugin(this);
