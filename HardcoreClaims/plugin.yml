@@ -6,3 +6,7 @@ website: http://dev.bukkit.org/bukkit-plugins/hardcoreclaims/
 main: alshain01.HardcoreClaims.HardcoreClaims
 depend: [GriefPrevention]
 softdepend: [Flags]
+permissions:
+  hardcoreclaims.admin:
+    description: Allows a player to bypass container and command restrictions.
+    default: false
