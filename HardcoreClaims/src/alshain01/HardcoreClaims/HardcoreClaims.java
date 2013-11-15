@@ -28,7 +28,15 @@ import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import me.ryanhamshire.GriefPrevention.events.ClaimDeletedEvent;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.Ocelot;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
+import org.bukkit.entity.Wolf;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -140,7 +148,26 @@ public class HardcoreClaims extends JavaPlugin {
 				}
 
 				GriefPrevention.instance.dataStore.deleteClaim(c);
+				removeTamedAnimals(e.getEntity());
 				//GriefPrevention.instance.restoreClaim(c, 0);
+			}
+		}
+		
+		private void removeTamedAnimals(Player player) {
+			for(World w : Bukkit.getWorlds()) {
+				if (hcFlag != null
+						&& !new Default(w).getValue((Flag) hcFlag, false)) {
+					continue;
+				}
+
+				for(Entity e : w.getEntitiesByClasses(Horse.class, Ocelot.class, Wolf.class)) {
+					if(((Tameable)e).isTamed()) {
+						if(e instanceof Horse) {
+							((Horse)e).setCarryingChest(false);
+						}
+						((Tameable)e).setOwner(null);
+					}
+				}
 			}
 		}
 	}
