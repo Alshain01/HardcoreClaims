@@ -159,7 +159,7 @@ public class HardcoreClaims extends JavaPlugin {
 				}
 
 				for(Entity e : w.getEntitiesByClasses(Ocelot.class, Wolf.class)) {
-					if(((Tameable)e).isTamed()) {
+					if(((Tameable)e).isTamed() && ((Tameable)e).getOwner().getName().equals(player.getName())) {
 						((Tameable)e).setOwner(null);
 					}
 				}
