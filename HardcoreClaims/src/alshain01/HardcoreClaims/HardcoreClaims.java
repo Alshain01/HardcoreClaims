@@ -27,7 +27,14 @@ package alshain01.HardcoreClaims;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Ocelot;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
+import org.bukkit.entity.Wolf;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -140,6 +147,22 @@ public class HardcoreClaims extends JavaPlugin {
 
 				GriefPrevention.instance.dataStore.deleteClaim(c);
 				GriefPrevention.instance.restoreClaim(c, 0);
+				removeTamedAnimals(e.getEntity());
+			}
+		}
+		
+		private void removeTamedAnimals(Player player) {
+			for(World w : Bukkit.getWorlds()) {
+				if (hcFlag != null
+						&& !new Default(w).getValue((Flag) hcFlag, false)) {
+					continue;
+				}
+
+				for(Entity e : w.getEntitiesByClasses(Ocelot.class, Wolf.class)) {
+					if(((Tameable)e).isTamed()) {
+						((Tameable)e).setOwner(null);
+					}
+				}
 			}
 		}
 	}
