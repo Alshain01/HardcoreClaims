@@ -27,10 +27,13 @@ package alshain01.HardcoreClaims;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
+import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import alshain01.Flags.Director;
@@ -50,7 +53,6 @@ public class HardcoreClaims extends JavaPlugin {
 		private void onPlayerDeath(PlayerDeathEvent e) {
 			if (delFlag != null
 					&& !Director.getAreaAt(e.getEntity().getLocation()).getValue((Flag) delFlag, false)) {
-				HardcoreClaims.instance.getLogger().info("DEBUG: Flag Protects Player Claims");
 				return;
 			}
 			
@@ -72,20 +74,46 @@ public class HardcoreClaims extends JavaPlugin {
 		}
 	}
 
+	private class ContainerGuard implements Listener {
+		@EventHandler(priority = EventPriority.LOW)
+		private void onBlockPlace(BlockPlaceEvent e) {
+			switch(e.getBlock().getType()) {
+				case CHEST:
+				case ENDER_CHEST:
+				case TRAPPED_CHEST:
+				case BREWING_STAND:
+				case DISPENSER:
+				case FURNACE:
+				case LOCKED_CHEST:
+				case HOPPER:
+				case HOPPER_MINECART:
+				case STORAGE_MINECART:
+					Claim claim = GriefPrevention.instance.dataStore.getClaimAt(e.getBlock().getLocation(), true, null);
+					if(claim == null || !claim.getOwnerName().equals(e.getPlayer().getName())) {
+						e.getPlayer().sendMessage(ChatColor.RED + "You may not place containers outside your claim on hardcore worlds.");
+						e.setCancelled(true);
+					}
+					break;
+				default:
+					break;
+			}
+		}
+	}
+	
 	private Object hcFlag = null;
 	private Object delFlag = null;
 	private final Listener reaper = new Reaper();
-	private static JavaPlugin instance;
+	private final Listener containerGuard = new ContainerGuard();
 	
 	@Override
 	public void onEnable() {
-		instance = this;
 		if(!getServer().getPluginManager().isPluginEnabled("GriefPrevention")) {
 			this.getLogger().info("Grief Prevention is not installed. HardcoreClaims is shutting down");
 			getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
 		getServer().getPluginManager().registerEvents(reaper, this);
+		getServer().getPluginManager().registerEvents(containerGuard, this);
 
 		if (getServer().getPluginManager().isPluginEnabled("Flags")) {
 			this.getLogger().info("Enabling Flags Integration");
@@ -104,5 +132,6 @@ public class HardcoreClaims extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		PlayerDeathEvent.getHandlerList().unregister(reaper);
+		PlayerInteractEvent.getHandlerList().unregister(containerGuard);
 	}
 }
