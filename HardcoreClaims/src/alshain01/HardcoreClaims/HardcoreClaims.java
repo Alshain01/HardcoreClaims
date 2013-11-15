@@ -161,7 +161,7 @@ public class HardcoreClaims extends JavaPlugin {
 				}
 
 				for(Entity e : w.getEntitiesByClasses(Horse.class, Ocelot.class, Wolf.class)) {
-					if(((Tameable)e).isTamed()) {
+					if(((Tameable)e).isTamed() && ((Tameable)e).getOwner().getName().equals(player.getName())) {
 						if(e instanceof Horse) {
 							((Horse)e).setCarryingChest(false);
 						}
