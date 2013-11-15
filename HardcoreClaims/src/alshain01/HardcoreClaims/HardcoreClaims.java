@@ -32,6 +32,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -50,18 +51,84 @@ import alshain01.Flags.area.GriefPreventionClaim;
  * @author Alshain01
  */
 public class HardcoreClaims extends JavaPlugin {
+	private class CommandGuard implements Listener {
+		@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+		private void onCommandPreprocess(PlayerCommandPreprocessEvent e) {
+			if (e.getPlayer().hasPermission("hardcoreclaims.admin")) {
+				return;
+			}
+
+			// If the world isn't configured for HardcoreClaims, ignore this
+			if (hcFlag != null
+					&& !new Default(e.getPlayer().getWorld()).getValue((Flag) hcFlag, false)) {
+				return;
+			}
+
+			// Block commands that would allow cheating the hardcore system
+			if (e.getMessage().toLowerCase().contains("abandonclaim")
+					|| e.getMessage().toLowerCase().contains("abandontoplevelclaim")) {
+				e.getPlayer().sendMessage(ChatColor.RED	+ "You may not abandon claims in hardcore worlds.");
+				e.setCancelled(true);
+			}
+		}
+
+	}
+
+	private class ContainerGuard implements Listener {
+		@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+		private void onBlockPlace(BlockPlaceEvent e) {
+			if (e.getPlayer().hasPermission("hardcoreclaims.admin")) {
+				return;
+			}
+
+			// If the world isn't configured for HardcoreClaims, ignore this
+			if (hcFlag != null
+					&& !new Default(e.getBlock().getWorld()).getValue((Flag) hcFlag, false)) {
+				return;
+			}
+
+			// Block all container placement outside claims to prevent cheating
+			switch (e.getBlock().getType()) {
+			case CHEST:
+				// Don't cancel it if they don't have a claim.
+				if (GriefPrevention.instance.dataStore.getPlayerData(e.getPlayer().getName()).claims.size() == 0) {
+					break;
+				}
+			case ENDER_CHEST:
+			case TRAPPED_CHEST:
+			case BREWING_STAND:
+			case DISPENSER:
+			case FURNACE:
+			case LOCKED_CHEST:
+			case HOPPER:
+			case HOPPER_MINECART:
+			case STORAGE_MINECART:
+				final Claim claim = GriefPrevention.instance.dataStore.getClaimAt(e.getBlock().getLocation(), true, null);
+				if (claim == null || !claim.getOwnerName().equals(e.getPlayer().getName())) {
+					e.getPlayer().sendMessage(ChatColor.RED	+ "You may not place containers outside your claim in hardcore worlds.");
+					e.setCancelled(true);
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
 	private class Reaper implements Listener {
-		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled=true)
+		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onPlayerDeath(PlayerDeathEvent e) {
 			// Is the player in an area that would cause a hardcore deletion
 			if (delFlag != null
 					&& !Director.getAreaAt(e.getEntity().getLocation()).getValue((Flag) delFlag, false)) {
 				return;
 			}
-			
-			for (Claim c : GriefPrevention.instance.dataStore.getPlayerData(e.getEntity().getName()).claims) {
+
+			for (final Claim c : GriefPrevention.instance.dataStore.getPlayerData(e.getEntity().getName()).claims) {
 				// Does the claim belong to the corpse
-				if (c == null || !c.inDataStore || !c.getOwnerName().equals(e.getEntity().getName())) {
+				if (c == null 
+						|| !c.inDataStore
+						|| !c.getOwnerName().equals(e.getEntity().getName())) {
 					continue;
 				}
 
@@ -77,109 +144,43 @@ public class HardcoreClaims extends JavaPlugin {
 		}
 	}
 
-	private class ContainerGuard implements Listener {
-		@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
-		private void onBlockPlace(BlockPlaceEvent e) {
-			if(e.getPlayer().hasPermission("hardcoreclaims.admin")) {
-				return;
-			}
-			
-			// If the world isn't configured for HardcoreClaims, ignore this
-			if (hcFlag != null
-					&& !new Default(e.getBlock().getWorld()).getValue((Flag) hcFlag, false)) {
-				return;
-			}
-		
-			// Block all container placement outside claims to prevent cheating
-			switch(e.getBlock().getType()) {
-				case CHEST:
-					// Don't cancel it if they don't have a claim.
-					if(GriefPrevention.instance.dataStore.getPlayerData(e.getPlayer().getName()).claims.size() == 0) {
-						return;
-					}
-				case ENDER_CHEST:
-				case TRAPPED_CHEST:
-				case BREWING_STAND:
-				case DISPENSER:
-				case FURNACE:
-				case LOCKED_CHEST:
-				case HOPPER:
-				case HOPPER_MINECART:
-				case STORAGE_MINECART:
-					Claim claim = GriefPrevention.instance.dataStore.getClaimAt(e.getBlock().getLocation(), true, null);
-					if(claim == null || !claim.getOwnerName().equals(e.getPlayer().getName())) {
-						e.getPlayer().sendMessage(ChatColor.RED + "You may not place containers outside your claim in hardcore worlds.");
-						e.setCancelled(true);
-					}
-					break;
-				default:
-					break;
-			}
-		}
-	}
-	
-	private class CommandGuard implements Listener {
-		@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
-		private void onCommandPreprocess(PlayerCommandPreprocessEvent e) {
-			if(e.getPlayer().hasPermission("hardcoreclaims.admin")) {
-				return;
-			}
-			
-			// If the world isn't configured for HardcoreClaims, ignore this
-			if (hcFlag != null
-					&& !new Default(e.getPlayer().getWorld()).getValue((Flag) hcFlag, false)) {
-				return;
-			}
-			
-			// Block commands that would allow cheating the hardcore system
-			if(e.getMessage().toLowerCase().contains("abandonclaim")
-					|| e.getMessage().toLowerCase().contains("abandontoplevelclaim")) {
-						e.getPlayer().sendMessage(ChatColor.RED + "You may not place abandon claims in hardcore worlds.");
-						e.setCancelled(true);
-			}
-		}
-		
-	}
-	
 	private Object hcFlag = null, delFlag = null;
 	private final Listener reaper = new Reaper();
 	private final Listener containerGuard = new ContainerGuard();
 	private final Listener commandGuard = new CommandGuard();
-	
+
+	@Override
+	public void onDisable() {
+		// Cleanup
+		EntityDeathEvent.getHandlerList().unregister(reaper);
+		PlayerInteractEvent.getHandlerList().unregister(containerGuard);
+		PlayerCommandPreprocessEvent.getHandlerList().unregister(commandGuard);
+	}
+
 	@Override
 	public void onEnable() {
-		// Require Plugin Check
-		if(!getServer().getPluginManager().isPluginEnabled("GriefPrevention")) {
-			this.getLogger().info("Grief Prevention is not installed. HardcoreClaims is shutting down");
+		// Required Plug-in Check
+		if (!getServer().getPluginManager().isPluginEnabled("GriefPrevention")) {
+			getLogger().info("Grief Prevention is not installed. HardcoreClaims is shutting down");
 			getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
-		
+
 		// Register Flags
 		if (getServer().getPluginManager().isPluginEnabled("Flags")) {
-			this.getLogger().info("Enabling Flags Integration");
-			delFlag = Flags.getRegistrar().register("HardcoreDeletion",
-					"Toggles whether the player will lose hardcore claims if they die in the area.",
-					true, getName());
-				
-			if(SystemType.getActive() == SystemType.GRIEF_PREVENTION) {
-				hcFlag = Flags.getRegistrar().register("HardcoreClaim",
-						"Toggles the claim's hardcore status (area/default only).",
-						true, getName());
+			getLogger().info("Enabling Flags Integration");
+			delFlag = Flags.getRegistrar()
+					.register("HardcoreDeletion", "Toggles whether the player will lose hardcore claims if they die in the area.", true, getName());
+
+			if (SystemType.getActive() == SystemType.GRIEF_PREVENTION) {
+				hcFlag = Flags.getRegistrar()
+						.register("HardcoreClaim", "Toggles the claim's hardcore status (area/default only).", true, getName());
 			}
 		}
-		
+
 		// Event Listeners
 		getServer().getPluginManager().registerEvents(reaper, this);
 		getServer().getPluginManager().registerEvents(containerGuard, this);
 		getServer().getPluginManager().registerEvents(commandGuard, this);
-	}
-	
-	@Override
-	public void onDisable() {
-		// Cleanup
-		PlayerDeathEvent.getHandlerList().unregister(reaper);
-		PlayerInteractEvent.getHandlerList().unregister(containerGuard);
-		PlayerCommandPreprocessEvent.getHandlerList().unregister(commandGuard);
 	}
 }
