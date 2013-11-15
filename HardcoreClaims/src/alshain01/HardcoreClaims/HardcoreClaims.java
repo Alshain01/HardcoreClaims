@@ -148,6 +148,11 @@ public class HardcoreClaims extends JavaPlugin {
 	private class Orphanage implements Listener {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onClaimDeleted(ClaimDeletedEvent e) {
+			if (hcFlag != null
+					&& !new GriefPreventionClaim(e.getClaim().getGreaterBoundaryCorner()).getValue((Flag) hcFlag, false)) {
+				return;
+			}
+			
 			//Delay the removal to wait for the claim to finish deleting
 			GriefPrevention.instance.restoreClaim(e.getClaim(), 100);
 		}
