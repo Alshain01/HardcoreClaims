@@ -24,6 +24,9 @@
 
 package alshain01.HardcoreClaims;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 
@@ -32,6 +35,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Ocelot;
+import org.bukkit.entity.Ocelot.Type;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wolf;
@@ -126,11 +130,14 @@ public class HardcoreClaims extends JavaPlugin {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onPlayerDeath(PlayerDeathEvent e) {
 			// Is the player in an area that would cause a hardcore deletion
+			Set<Claim> deleteClaims = new HashSet<Claim>();
+			
 			if (delFlag != null
 					&& !Director.getAreaAt(e.getEntity().getLocation()).getValue((Flag) delFlag, false)) {
 				return;
 			}
 
+			removeTamedAnimals(e.getEntity());
 			for (final Claim c : GriefPrevention.instance.dataStore.getPlayerData(e.getEntity().getName()).claims) {
 				// Does the claim belong to the corpse
 				if (c == null 
@@ -145,10 +152,15 @@ public class HardcoreClaims extends JavaPlugin {
 					continue;
 				}
 
+				// Done for synchronization
+				deleteClaims.add(c);
+			}
+			
+			for(final Claim c : deleteClaims) {
 				GriefPrevention.instance.dataStore.deleteClaim(c);
 				GriefPrevention.instance.restoreClaim(c, 0);
-				removeTamedAnimals(e.getEntity());
 			}
+
 		}
 		
 		private void removeTamedAnimals(Player player) {
@@ -160,6 +172,14 @@ public class HardcoreClaims extends JavaPlugin {
 
 				for(Entity e : w.getEntitiesByClasses(Ocelot.class, Wolf.class)) {
 					if(((Tameable)e).isTamed() && ((Tameable)e).getOwner().getName().equals(player.getName())) {
+						if(e instanceof Ocelot) {
+							((Ocelot)e).setCatType(Type.WILD_OCELOT);
+							((Ocelot)e).setSitting(false);
+						}
+						
+						if(e instanceof Wolf) {
+							((Wolf)e).setSitting(false);
+						}
 						((Tameable)e).setOwner(null);
 					}
 				}
@@ -171,7 +191,8 @@ public class HardcoreClaims extends JavaPlugin {
 	private final Listener reaper = new Reaper();
 	private final Listener containerGuard = new ContainerGuard();
 	private final Listener commandGuard = new CommandGuard();
-
+	//private static JavaPlugin instance;
+	
 	@Override
 	public void onDisable() {
 		// Cleanup
@@ -182,6 +203,7 @@ public class HardcoreClaims extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		//instance = this;
 		// Required Plug-in Check
 		if (!getServer().getPluginManager().isPluginEnabled("GriefPrevention")) {
 			getLogger().info("Grief Prevention is not installed. HardcoreClaims is shutting down");
