@@ -24,6 +24,9 @@
 
 package alshain01.HardcoreClaims;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import me.ryanhamshire.GriefPrevention.events.ClaimDeletedEvent;
@@ -34,7 +37,9 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Ocelot;
+import org.bukkit.entity.Ocelot.Type;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wolf;
@@ -44,7 +49,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -62,29 +66,6 @@ import alshain01.Flags.area.GriefPreventionClaim;
  * @author Alshain01
  */
 public class HardcoreClaims extends JavaPlugin {
-	private class CommandGuard implements Listener {
-		@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-		private void onCommandPreprocess(PlayerCommandPreprocessEvent e) {
-			if (e.getPlayer().hasPermission("hardcoreclaims.admin")) {
-				return;
-			}
-
-			// If the world isn't configured for HardcoreClaims, ignore this
-			if (hcFlag != null
-					&& !new Default(e.getPlayer().getWorld()).getValue((Flag) hcFlag, false)) {
-				return;
-			}
-
-			// Block commands that would allow cheating the hardcore system
-			if (e.getMessage().toLowerCase().contains("abandonclaim")
-					|| e.getMessage().toLowerCase().contains("abandontoplevelclaim")) {
-				e.getPlayer().sendMessage(ChatColor.RED	+ "You may not abandon claims in hardcore worlds.");
-				e.setCancelled(true);
-			}
-		}
-
-	}
-
 	private class ContainerGuard implements Listener {
 		@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 		private void onBlockPlace(BlockPlaceEvent e) {
@@ -129,12 +110,15 @@ public class HardcoreClaims extends JavaPlugin {
 	private class Reaper implements Listener {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onPlayerDeath(PlayerDeathEvent e) {
+            Set<Claim> deleteClaims = new HashSet<Claim>();
+            
 			// Is the player in an area that would cause a hardcore deletion
 			if (delFlag != null
 					&& !Director.getAreaAt(e.getEntity().getLocation()).getValue((Flag) delFlag, false)) {
 				return;
 			}
-
+			
+			removeTamedAnimals(e.getEntity());
 			for (final Claim c : GriefPrevention.instance.dataStore.getPlayerData(e.getEntity().getName()).claims) {
 				// Does the claim belong to the corpse
 				if (c == null 
@@ -149,10 +133,15 @@ public class HardcoreClaims extends JavaPlugin {
 					continue;
 				}
 
-				GriefPrevention.instance.dataStore.deleteClaim(c);
-				removeTamedAnimals(e.getEntity());
-				//GriefPrevention.instance.restoreClaim(c, 0);
+				// Done for synchronization
+                deleteClaims.add(c);
 			}
+			
+            for(final Claim c : deleteClaims) {
+                GriefPrevention.instance.dataStore.deleteClaim(c);
+                GriefPrevention.instance.restoreClaim(c, 0);
+            }
+            
 		}
 		
 		private void removeTamedAnimals(Player player) {
@@ -164,11 +153,21 @@ public class HardcoreClaims extends JavaPlugin {
 
 				for(Entity e : w.getEntitiesByClasses(Horse.class, Ocelot.class, Wolf.class)) {
 					if(((Tameable)e).isTamed() && ((Tameable)e).getOwner().getName().equals(player.getName())) {
+                        if(e instanceof Ocelot) {
+                            ((Ocelot)e).setCatType(Type.WILD_OCELOT);
+                            ((Ocelot)e).setSitting(false);
+                        }
+                    
+                        if(e instanceof Wolf) {
+                            ((Wolf)e).setSitting(false);
+                        }
+                        
 						if(e instanceof Horse) {
 							((Horse)e).setCarryingChest(false);
 							((Horse)e).getInventory().setArmor(new ItemStack(Material.AIR));
 							((Horse)e).getInventory().setSaddle(new ItemStack(Material.AIR));
 						}
+						((LivingEntity)e).setLeashHolder(null);
 						((Tameable)e).setOwner(null);
 					}
 				}
@@ -192,10 +191,8 @@ public class HardcoreClaims extends JavaPlugin {
 	// Flags need to be Objects to guard against cases where
 	// The Flags plugin in is not installed.  We will cast them back later.
 	private Object hcFlag = null, delFlag = null;
-	@SuppressWarnings("unused")
 	private final Listener reaper = new Reaper(), 
 			containerGuard = new ContainerGuard(),
-			commandGuard = new CommandGuard(),
 			orphanage = new Orphanage();
 
 	@Override
@@ -203,7 +200,6 @@ public class HardcoreClaims extends JavaPlugin {
 		// Cleanup
 		EntityDeathEvent.getHandlerList().unregister(reaper);
 		PlayerInteractEvent.getHandlerList().unregister(containerGuard);
-		//PlayerCommandPreprocessEvent.getHandlerList().unregister(commandGuard);
 		ClaimDeletedEvent.getHandlerList().unregister(orphanage);
 	}
 
@@ -231,7 +227,6 @@ public class HardcoreClaims extends JavaPlugin {
 		// Event Listeners
 		getServer().getPluginManager().registerEvents(reaper, this);
 		getServer().getPluginManager().registerEvents(containerGuard, this);
-		//getServer().getPluginManager().registerEvents(commandGuard, this);
 		getServer().getPluginManager().registerEvents(orphanage, this);
 	}
 }
