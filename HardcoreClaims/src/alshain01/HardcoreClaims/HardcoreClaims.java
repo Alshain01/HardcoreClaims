@@ -166,6 +166,7 @@ public class HardcoreClaims extends JavaPlugin {
 							((Horse)e).setCarryingChest(false);
 							((Horse)e).getInventory().setArmor(new ItemStack(Material.AIR));
 							((Horse)e).getInventory().setSaddle(new ItemStack(Material.AIR));
+							((Horse)e).setDomestication(0);
 						}
 						((LivingEntity)e).setLeashHolder(null);
 						((Tameable)e).setOwner(null);
