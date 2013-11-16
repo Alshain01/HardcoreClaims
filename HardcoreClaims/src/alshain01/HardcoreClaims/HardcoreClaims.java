@@ -184,8 +184,7 @@ public class HardcoreClaims extends JavaPlugin {
 				return;
 			}
 			
-			//Delay the removal to wait for the claim to finish deleting
-			GriefPrevention.instance.restoreClaim(e.getClaim(), 100);
+			GriefPrevention.instance.restoreClaim(e.getClaim(), 0);
 		}
 	}
 
