@@ -45,10 +45,10 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import alshain01.Flags.Director;
 import alshain01.Flags.Flag;
 import alshain01.Flags.Flags;
 import alshain01.Flags.SystemType;
+import alshain01.Flags.area.Area;
 import alshain01.Flags.area.Default;
 import alshain01.Flags.area.GriefPreventionClaim;
 
@@ -127,7 +127,7 @@ public class HardcoreClaims extends JavaPlugin {
 		private void onPlayerDeath(PlayerDeathEvent e) {
 			// Is the player in an area that would cause a hardcore deletion
 			if (delFlag != null
-					&& !Director.getAreaAt(e.getEntity().getLocation()).getValue((Flag) delFlag, false)) {
+					&& !Area.getAt(e.getEntity().getLocation()).getValue((Flag) delFlag, false)) {
 				return;
 			}
 
