@@ -53,12 +53,12 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import alshain01.Flags.Flag;
-import alshain01.Flags.Flags;
-import alshain01.Flags.SystemType;
-import alshain01.Flags.area.Area;
-import alshain01.Flags.area.Default;
-import alshain01.Flags.area.GriefPreventionClaim;
+import io.github.alshain01.Flags.Flag;
+import io.github.alshain01.Flags.Flags;
+import io.github.alshain01.Flags.SystemType;
+import io.github.alshain01.Flags.area.Area;
+import io.github.alshain01.Flags.area.Default;
+import io.github.alshain01.Flags.area.GriefPreventionClaim;
 
 /**
  * HardcoreClaims
