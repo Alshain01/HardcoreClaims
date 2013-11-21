@@ -48,7 +48,6 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wolf;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -88,12 +87,6 @@ public class HardcoreClaims extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new Reaper(), this);
 		getServer().getPluginManager().registerEvents(new ContainerGuard(), this);
 		getServer().getPluginManager().registerEvents(new CommandGuard(), this);
-	}
-	
-	@Override
-	public void onDisable() {
-		// Cleanup
-		HandlerList.unregisterAll(this);
 	}
 	
 	private class CommandGuard implements Listener {
@@ -204,18 +197,23 @@ public class HardcoreClaims extends JavaPlugin {
 					continue;
 				}
 
-				for(Entity e : w.getEntitiesByClasses(Ocelot.class, Wolf.class)) {
-					if(((Tameable)e).isTamed() && ((Tameable)e).getOwner().getName().equals(player.getName())) {
-						if(e instanceof Ocelot) {
-							((Ocelot)e).setCatType(Type.WILD_OCELOT);
-							((Ocelot)e).setSitting(false);
-						}
-						
-						if(e instanceof Wolf) {
-							((Wolf)e).setSitting(false);
-						}
-						((Tameable)e).setOwner(null);
+				for(Entity e : w.getEntities()) {
+					if(!(e instanceof Tameable)) {
+						continue;
 					}
+					
+					Tameable t = (Tameable)e;
+					if((!t.isTamed() || !t.getOwner().getName().equals(player.getName()))) {
+						continue;
+					}
+					
+					if(t instanceof Ocelot) {
+						((Ocelot)t).setCatType(Type.WILD_OCELOT);
+						((Ocelot)t).setSitting(false);
+					} else if (t instanceof Wolf) {
+						((Wolf)t).setSitting(false);
+					}
+					t.setOwner(null);
 				}
 			}
 		}
