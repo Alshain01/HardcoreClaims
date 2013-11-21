@@ -48,12 +48,11 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wolf;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -62,6 +61,41 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author Alshain01
  */
 public class HardcoreClaims extends JavaPlugin {
+	private Object hcFlag = null, delFlag = null;
+	
+	@Override
+	public void onEnable() {
+		// Required Plug-in Check
+		if (!getServer().getPluginManager().isPluginEnabled("GriefPrevention")) {
+			getLogger().info("Grief Prevention is not installed. HardcoreClaims is shutting down");
+			getServer().getPluginManager().disablePlugin(this);
+			return;
+		}
+
+		// Register Flags
+		if (getServer().getPluginManager().isPluginEnabled("Flags")) {
+			getLogger().info("Enabling Flags Integration");
+			delFlag = Flags.getRegistrar()
+					.register("HardcoreDeletion", "Toggles whether the player will lose hardcore claims if they die in the area.", true, getName());
+
+			if (SystemType.getActive() == SystemType.GRIEF_PREVENTION) {
+				hcFlag = Flags.getRegistrar()
+						.register("HardcoreClaim", "Toggles the claim's hardcore status (area/default only).", true, getName());
+			}
+		}
+
+		// Event Listeners
+		getServer().getPluginManager().registerEvents(new Reaper(), this);
+		getServer().getPluginManager().registerEvents(new ContainerGuard(), this);
+		getServer().getPluginManager().registerEvents(new CommandGuard(), this);
+	}
+	
+	@Override
+	public void onDisable() {
+		// Cleanup
+		HandlerList.unregisterAll(this);
+	}
+	
 	private class CommandGuard implements Listener {
 		@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 		private void onCommandPreprocess(PlayerCommandPreprocessEvent e) {
@@ -185,47 +219,5 @@ public class HardcoreClaims extends JavaPlugin {
 				}
 			}
 		}
-	}
-
-	private Object hcFlag = null, delFlag = null;
-	private final Listener reaper = new Reaper();
-	private final Listener containerGuard = new ContainerGuard();
-	private final Listener commandGuard = new CommandGuard();
-	//private static JavaPlugin instance;
-	
-	@Override
-	public void onDisable() {
-		// Cleanup
-		EntityDeathEvent.getHandlerList().unregister(reaper);
-		PlayerInteractEvent.getHandlerList().unregister(containerGuard);
-		PlayerCommandPreprocessEvent.getHandlerList().unregister(commandGuard);
-	}
-
-	@Override
-	public void onEnable() {
-		//instance = this;
-		// Required Plug-in Check
-		if (!getServer().getPluginManager().isPluginEnabled("GriefPrevention")) {
-			getLogger().info("Grief Prevention is not installed. HardcoreClaims is shutting down");
-			getServer().getPluginManager().disablePlugin(this);
-			return;
-		}
-
-		// Register Flags
-		if (getServer().getPluginManager().isPluginEnabled("Flags")) {
-			getLogger().info("Enabling Flags Integration");
-			delFlag = Flags.getRegistrar()
-					.register("HardcoreDeletion", "Toggles whether the player will lose hardcore claims if they die in the area.", true, getName());
-
-			if (SystemType.getActive() == SystemType.GRIEF_PREVENTION) {
-				hcFlag = Flags.getRegistrar()
-						.register("HardcoreClaim", "Toggles the claim's hardcore status (area/default only).", true, getName());
-			}
-		}
-
-		// Event Listeners
-		getServer().getPluginManager().registerEvents(reaper, this);
-		getServer().getPluginManager().registerEvents(containerGuard, this);
-		getServer().getPluginManager().registerEvents(commandGuard, this);
 	}
 }
