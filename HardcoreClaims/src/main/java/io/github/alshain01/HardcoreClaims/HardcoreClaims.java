@@ -22,7 +22,7 @@ Notice — For any reuse or distribution, you must make clear to others the lice
 http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package alshain01.HardcoreClaims;
+package io.github.alshain01.HardcoreClaims;
 
 import io.github.alshain01.Flags.Flag;
 import io.github.alshain01.Flags.Flags;
