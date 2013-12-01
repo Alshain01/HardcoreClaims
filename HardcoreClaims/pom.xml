@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>HardcoreClaims</groupId>
   <artifactId>HardcoreClaims</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
   <name>HardcoreClaims</name>
   <description>Addon for Grief Prevention that deletes claims and restores the land when a player dies.</description>
   <url>http://dev.bukkit.org/bukkit-plugins/flags/</url> 
@@ -67,7 +67,7 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.7.2-R0.1-SNAPSHOT</version>
+			<version>1.5.2-R1.0</version>
 		</dependency>
 	</dependencies>
 </project>

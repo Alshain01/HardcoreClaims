@@ -111,6 +111,7 @@ public class HardcoreClaims extends JavaPlugin {
 			case BREWING_STAND:
 			case DISPENSER:
 			case FURNACE:
+			case LOCKED_CHEST:
 			case HOPPER:
 			case HOPPER_MINECART:
 			case STORAGE_MINECART:
