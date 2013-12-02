@@ -5,7 +5,12 @@
   <version>2.0.1</version>
   <name>HardcoreClaims</name>
   <description>Addon for Grief Prevention that deletes claims and restores the land when a player dies.</description>
- <url>http://dev.bukkit.org/bukkit-plugins/hardcoreclaims/</url> 
+ <url>http://dev.bukkit.org/bukkit-plugins/hardcoreclaims/</url>
+ 
+	<properties>
+		<dependencydir>C:\build_libraries</dependencydir>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties> 
   <build>
 	<defaultGoal>clean package install</defaultGoal>
 	<finalName>${project.name}</finalName>
@@ -51,10 +56,6 @@
             
 	</resources>
   </build>
-  
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 	
 	<repositories>
 		<repository>
@@ -68,6 +69,14 @@
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
 			<version>LATEST</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>me.ryanhamshire.GriefPrevention</groupId>
+			<artifactId>GriefPrevention</artifactId>
+			<systemPath>${dependencydir}\GriefPrevention-193.jar</systemPath>
+			<version>7.8</version>
+			<scope>system</scope>
 		</dependency>
 	</dependencies>
 </project>
