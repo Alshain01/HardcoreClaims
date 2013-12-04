@@ -52,7 +52,7 @@
 		<connection>scm:git:git://github.com/Alshain01/HardcoreClaims.git</connection>
 		<developerConnection>scm:git:git@github.com:Alshain01/HardcoreClaims.git</developerConnection>
 		<url>https://github.com/Alshain01/HardcoreClaims</url>
-		<tag>master</tag>
+		<tag>2.0.0</tag>
 	</scm>
 
 	<properties>
