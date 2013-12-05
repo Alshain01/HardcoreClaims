@@ -1,9 +1,9 @@
-name: {$project.name}
-version: {$project.version}
-description: {$project.description}
-author: {$project.author}
-website: {$project.url}
-main: {$project.main}
+name: ${project.name}
+version: ${project.version}
+description: ${project.description}
+author: ${project.author}
+website: ${project.url}
+main: ${project.main}
 depend: [GriefPrevention]
 softdepend: [Flags]
 permissions:
