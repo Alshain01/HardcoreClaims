@@ -9,6 +9,8 @@
 
     <properties>
         <dependencydir>C:\build_libraries</dependencydir>
+        <project.author>Alshain01</project.author>
+        <project.main>io.github.alshain01.HardcoreClaims.HardcoreClaims</project.main>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
