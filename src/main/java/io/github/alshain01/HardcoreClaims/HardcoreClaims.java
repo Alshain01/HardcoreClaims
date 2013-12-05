@@ -64,7 +64,7 @@ import io.github.alshain01.Flags.area.GriefPreventionClaim;
  * 
  * @author Alshain01
  */
-public class Main extends JavaPlugin {
+public class HardcoreClaims extends JavaPlugin {
 	// Flags need to be Objects to guard against cases where
 	// The Flags plugin in is not installed.  We will cast them back later.
 	private Object hcFlag = null, delFlag = null;

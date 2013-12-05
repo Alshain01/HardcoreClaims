@@ -7,6 +7,13 @@
 	<description>Grief Prevention extension plugin that deletes claims and restores the land when a player dies.</description>
 	<url>http://dev.bukkit.org/bukkit-plugins/hardcoreclaims/</url>
 
+    <properties>
+        <dependencydir>C:\build_libraries</dependencydir>
+        <project.author>Alshain01</project.author>
+        <project.main>io.github.alshain01.HardcoreClaims.HardcoreClaims</project.main>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
 	<repositories>
 		<repository>
 			<id>bukkit-repo</id>
@@ -14,8 +21,8 @@
 		</repository>
 
 		<repository>
-			<id>flags-snapshot</id>
-			<url>http://pages.suddenlink.net/alshain01/flags/snapshot/</url>
+			<id>flags-repo</id>
+			<url>http://pages.suddenlink.net/alshain01/flags/repository/</url>
 		</repository>
 	</repositories>
 
@@ -54,11 +61,6 @@
 		<url>https://github.com/Alshain01/HardcoreClaims</url>
 		<tag>2.0.0</tag>
 	</scm>
-
-	<properties>
-		<dependencydir>C:\build_libraries</dependencydir>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 
 	<build>
 		<defaultGoal>clean package install</defaultGoal>
