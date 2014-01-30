@@ -22,7 +22,7 @@
  http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.HardcoreClaims;
+package io.github.alshain01.hardcoreclaims;
 
 import java.io.IOException;
 import java.util.HashSet;

@@ -27,7 +27,7 @@
 * either expressed or implied, of anybody else.
 */
 
-package io.github.alshain01.HardcoreClaims;
+package io.github.alshain01.hardcoreclaims;
 
         import org.bukkit.Bukkit;
         import org.bukkit.configuration.InvalidConfigurationException;
