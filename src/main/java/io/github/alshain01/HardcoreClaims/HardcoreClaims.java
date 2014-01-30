@@ -52,11 +52,11 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import io.github.alshain01.Flags.Flag;
-import io.github.alshain01.Flags.Flags;
-import io.github.alshain01.Flags.System;
-import io.github.alshain01.Flags.area.Default;
-import io.github.alshain01.Flags.area.GriefPreventionClaim;
+import io.github.alshain01.flags.Flag;
+import io.github.alshain01.flags.Flags;
+import io.github.alshain01.flags.System;
+import io.github.alshain01.flags.area.Default;
+import io.github.alshain01.flags.area.GriefPreventionClaim;
 
 /**
  * HardcoreClaims
