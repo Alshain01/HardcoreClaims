@@ -24,6 +24,7 @@
 
 package io.github.alshain01.HardcoreClaims;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -93,6 +94,13 @@ public class HardcoreClaims extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new Reaper(), this);
 		getServer().getPluginManager().registerEvents(new ContainerGuard(), this);
 		getServer().getPluginManager().registerEvents(new Orphanage(), this);
+
+        try {
+            MetricsLite metrics = new MetricsLite(this);
+            metrics.start();
+        } catch (IOException ex) {
+            this.getLogger().info("Failed to Start Metrics");
+        }
 	}
 	
 	@Override
