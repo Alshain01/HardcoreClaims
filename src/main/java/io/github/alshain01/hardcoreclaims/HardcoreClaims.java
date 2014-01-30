@@ -22,14 +22,15 @@ Notice — For any reuse or distribution, you must make clear to others the lice
 http://creativecommons.org/licenses/by-nc/3.0/
  */
 
-package io.github.alshain01.HardcoreClaims;
+package io.github.alshain01.hardcoreclaims;
 
-import io.github.alshain01.Flags.Flag;
-import io.github.alshain01.Flags.Flags;
-import io.github.alshain01.Flags.System;
-import io.github.alshain01.Flags.area.Default;
-import io.github.alshain01.Flags.area.GriefPreventionClaim;
+import io.github.alshain01.flags.Flag;
+import io.github.alshain01.flags.Flags;
+import io.github.alshain01.flags.System;
+import io.github.alshain01.flags.area.Default;
+import io.github.alshain01.flags.area.GriefPreventionClaim;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -235,5 +236,12 @@ public class HardcoreClaims extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new Reaper(), this);
 		getServer().getPluginManager().registerEvents(new ContainerGuard(),	this);
 		getServer().getPluginManager().registerEvents(new CommandGuard(), this);
+
+        try {
+            MetricsLite metrics = new MetricsLite(this);
+            metrics.start();
+        } catch (IOException ex) {
+            this.getLogger().info("Failed to Start Metrics");
+        }
 	}
 }

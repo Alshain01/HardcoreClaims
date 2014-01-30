@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>HardcoreClaims</groupId>
+	<groupId>io.github.alshain01.hardcoreclaims</groupId>
 	<artifactId>HardcoreClaims</artifactId>
 	<version>1.0.3</version>
 	<name>HardcoreClaims</name>
@@ -10,7 +10,7 @@
     <properties>
         <dependencydir>C:\build_libraries</dependencydir>
         <project.author>Alshain01</project.author>
-        <project.main>io.github.alshain01.HardcoreClaims.HardcoreClaims</project.main>
+        <project.main>io.github.alshain01.hardcoreclaims.HardcoreClaims</project.main>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -42,9 +42,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>io.github.alshain01</groupId>
+			<groupId>io.github.alshain01.flags</groupId>
 			<artifactId>Flags</artifactId>
-			<version>1.3.0-SNAPSHOT</version>
+			<version>RELEASE</version>
 			<optional>true</optional>
 			<exclusions>
 				<exclusion>
