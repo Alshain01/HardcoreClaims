@@ -36,7 +36,7 @@
 		<dependency>
 			<groupId>me.ryanhamshire.GriefPrevention</groupId>
 			<artifactId>GriefPrevention</artifactId>
-			<systemPath>${dependencydir}\GriefPrevention-197.jar</systemPath>
+			<systemPath>${dependencydir}\GriefPrevention-282.jar</systemPath>
 			<version>7.8</version>
 			<scope>system</scope>
 		</dependency>

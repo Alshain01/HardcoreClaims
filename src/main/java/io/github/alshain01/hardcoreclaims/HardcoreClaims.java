@@ -28,6 +28,12 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.github.alshain01.flags.Flag;
+import io.github.alshain01.flags.Flags;
+import io.github.alshain01.flags.area.Default;
+import io.github.alshain01.flags.area.GriefPreventionClaim;
+import io.github.alshain01.flags.CuboidType;
+
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import me.ryanhamshire.GriefPrevention.events.ClaimDeletedEvent;
@@ -53,11 +59,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import io.github.alshain01.flags.Flag;
-import io.github.alshain01.flags.Flags;
-import io.github.alshain01.flags.System;
-import io.github.alshain01.flags.area.Default;
-import io.github.alshain01.flags.area.GriefPreventionClaim;
 
 /**
  * HardcoreClaims
@@ -84,7 +85,7 @@ public class HardcoreClaims extends JavaPlugin {
 			delFlag = Flags.getRegistrar()
 					.register("HardcoreDeletion", "Toggles whether the player will lose hardcore claims if they die in the area.", true, getName());
 
-			if (System.getActive() == System.GRIEF_PREVENTION) {
+			if (CuboidType.getActive() == CuboidType.GRIEF_PREVENTION) {
 				hcFlag = Flags.getRegistrar()
 						.register("HardcoreClaim", "Toggles the claim's hardcore status (area/default only).", true, getName());
 			}
@@ -155,7 +156,7 @@ public class HardcoreClaims extends JavaPlugin {
             
 			// Is the player in an area that would cause a hardcore deletion
 			if (delFlag != null
-					&& !System.getActive().getAreaAt(e.getEntity().getLocation()).getValue((Flag) delFlag, false)) {
+					&& !CuboidType.getActive().getAreaAt(e.getEntity().getLocation()).getValue((Flag) delFlag, false)) {
 				return;
 			}
 			

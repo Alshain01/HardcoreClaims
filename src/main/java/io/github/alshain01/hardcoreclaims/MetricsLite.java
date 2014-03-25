@@ -50,7 +50,7 @@ package io.github.alshain01.hardcoreclaims;
         import java.util.logging.Level;
         import java.util.zip.GZIPOutputStream;
 
-public class MetricsLite {
+class MetricsLite {
 
     /**
      * The current revision number
