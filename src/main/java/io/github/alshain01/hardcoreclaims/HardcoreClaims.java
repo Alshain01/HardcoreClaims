@@ -24,9 +24,9 @@ http://creativecommons.org/licenses/by-nc/3.0/
 
 package io.github.alshain01.hardcoreclaims;
 
+import io.github.alshain01.flags.CuboidType;
 import io.github.alshain01.flags.Flag;
 import io.github.alshain01.flags.Flags;
-import io.github.alshain01.flags.System;
 import io.github.alshain01.flags.area.Default;
 import io.github.alshain01.flags.area.GriefPreventionClaim;
 
@@ -138,7 +138,7 @@ public class HardcoreClaims extends JavaPlugin {
 			final Set<Claim> deleteClaims = new HashSet<Claim>();
 
 			if (delFlag != null
-					&& !System.getActive().getAreaAt(e.getEntity().getLocation()).getValue((Flag) delFlag, false)) {
+					&& !CuboidType.getActive().getAreaAt(e.getEntity().getLocation()).getValue((Flag) delFlag, false)) {
 				return;
 			}
 
@@ -222,7 +222,7 @@ public class HardcoreClaims extends JavaPlugin {
 							"Toggles whether the player will lose hardcore claims if they die in the area.",
 							true, getName());
 
-			if (System.getActive() == System.GRIEF_PREVENTION) {
+			if (CuboidType.getActive() == CuboidType.GRIEF_PREVENTION) {
 				hcFlag = Flags
 						.getRegistrar()
 						.register(
