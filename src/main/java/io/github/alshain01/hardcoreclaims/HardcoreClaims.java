@@ -28,11 +28,9 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import io.github.alshain01.flags.Flag;
-import io.github.alshain01.flags.Flags;
-import io.github.alshain01.flags.area.Default;
-import io.github.alshain01.flags.area.GriefPreventionClaim;
-import io.github.alshain01.flags.CuboidType;
+import io.github.alshain01.flags.api.CuboidPlugin;
+import io.github.alshain01.flags.api.Flag;
+import io.github.alshain01.flags.api.FlagsAPI;
 
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
@@ -82,12 +80,12 @@ public class HardcoreClaims extends JavaPlugin {
 		// Register Non-Player Flags
 		if (getServer().getPluginManager().isPluginEnabled("Flags")) {
 			getLogger().info("Enabling Flags Integration");
-			delFlag = Flags.getRegistrar()
-					.register("HardcoreDeletion", "Toggles whether the player will lose hardcore claims if they die in the area.", true, getName());
+			delFlag = FlagsAPI.getRegistrar()
+					.registerFlag("HardcoreDeletion", "Toggles whether the player will lose hardcore claims if they die in the area.", true, getName());
 
-			if (CuboidType.getActive() == CuboidType.GRIEF_PREVENTION) {
-				hcFlag = Flags.getRegistrar()
-						.register("HardcoreClaim", "Toggles the claim's hardcore status (area/default only).", true, getName());
+			if (FlagsAPI.getCuboidPlugin() == CuboidPlugin.GRIEF_PREVENTION) {
+				hcFlag = FlagsAPI.getRegistrar()
+						.registerFlag("HardcoreClaim", "Toggles the claim's hardcore status (area/default only).", true, getName());
 			}
 		}
 
@@ -118,7 +116,7 @@ public class HardcoreClaims extends JavaPlugin {
 
 			// If the world isn't configured for HardcoreClaims, ignore this
 			if (hcFlag != null
-					&& !new Default(e.getBlock().getWorld()).getValue((Flag) hcFlag, false)) {
+					&& !FlagsAPI.getDefaultArea(e.getBlock().getWorld()).getState((Flag) hcFlag, false)) {
 				return;
 			}
 
@@ -156,7 +154,7 @@ public class HardcoreClaims extends JavaPlugin {
             
 			// Is the player in an area that would cause a hardcore deletion
 			if (delFlag != null
-					&& !CuboidType.getActive().getAreaAt(e.getEntity().getLocation()).getValue((Flag) delFlag, false)) {
+					&& !FlagsAPI.getAreaAt(e.getEntity().getLocation()).getState((Flag) delFlag, false)) {
 				return;
 			}
 			
@@ -171,7 +169,7 @@ public class HardcoreClaims extends JavaPlugin {
 
 				// Is the claim subject to a hardcore deletion
 				if (hcFlag != null
-						&& !new GriefPreventionClaim(c.getGreaterBoundaryCorner()).getValue((Flag) hcFlag, false)) {
+						&& !FlagsAPI.getAreaAt(c.getGreaterBoundaryCorner()).getState((Flag) hcFlag, false)) {
 					continue;
 				}
 
@@ -189,7 +187,7 @@ public class HardcoreClaims extends JavaPlugin {
 		private void removeTamedAnimals(Player player) {
 			for(World w : Bukkit.getWorlds()) {
 				if (hcFlag != null
-						&& !new Default(w).getValue((Flag) hcFlag, false)) {
+						&& !FlagsAPI.getDefaultArea(w).getState((Flag) hcFlag, false)) {
 					continue;
 				}
 
@@ -222,7 +220,7 @@ public class HardcoreClaims extends JavaPlugin {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		private void onClaimDeleted(ClaimDeletedEvent e) {
 			if (hcFlag != null
-					&& !new GriefPreventionClaim(e.getClaim().getGreaterBoundaryCorner()).getValue((Flag) hcFlag, false)) {
+					&& !FlagsAPI.getAreaAt(e.getClaim().getGreaterBoundaryCorner()).getState((Flag) hcFlag, false)) {
 				return;
 			}
 			

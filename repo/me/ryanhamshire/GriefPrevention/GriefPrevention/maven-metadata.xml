@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+    <groupId>me.ryanhamshire.GriefPrevention</groupId>
+    <artifactId>GriefPrevention</artifactId>
+    <versioning>
+        <release>282</release>
+        <versions>
+            <version>282</version>
+        </versions>
+        <lastUpdated>20140331000000</lastUpdated>
+    </versioning>
+</metadata>
